@@ -1,0 +1,6 @@
+# Forzar PHP 7
+AddHandler application/x-httpd-php70 .php
+# o
+AddHandler application/x-httpd-php71 .php
+# o
+AddHandler application/x-httpd-php72 .php

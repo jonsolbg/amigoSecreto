@@ -3,13 +3,16 @@ amigo-secreto/
 ├── admin.php
 ├── participate.php
 ├── include/
-│   ├── mainApp.php          ← Archivo de inicialización principal
+│   ├── mainApp.php
 │   └── functions/
 │       ├── tenant.php
 │       ├── participants.php
 │       ├── draw.php
 │       ├── assignments.php
 │       └── helpers.php
+├── assets/
+│   └── css/
+│       └── custom.css          ← Estilos personalizados
 ├── tenants/
 │   └── {tenant_id}/
 │       ├── config.json

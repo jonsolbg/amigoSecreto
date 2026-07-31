@@ -1,0 +1,258 @@
+/* assets/css/custom.css */
+
+/* Estilos generales */
+body {
+    background: #f5f5f5;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Tarjetas con sombra suave */
+.w3-card {
+    border-radius: 10px !important;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.w3-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+}
+
+/* Encabezado con gradiente */
+.header-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    padding: 30px;
+}
+
+/* Tarjetas de tenant */
+.tenant-card {
+    border-left: 4px solid #667eea;
+    transition: all 0.3s;
+}
+
+.tenant-card:hover {
+    border-left-color: #764ba2;
+}
+
+/* Participantes */
+.participant-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.participant-item:hover {
+    background: #f8f9ff;
+}
+
+.participant-item:last-child {
+    border-bottom: none;
+}
+
+/* Asignaciones */
+.assignment-item {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 3px solid #4CAF50;
+    transition: all 0.2s;
+}
+
+.assignment-item:hover {
+    background: #f0f1f5;
+    transform: scale(1.02);
+}
+
+/* Botones con efectos */
+.w3-btn {
+    border-radius: 5px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s !important;
+}
+
+.w3-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.w3-btn:active {
+    transform: translateY(0px);
+}
+
+/* Mensajes flash */
+.flash-message {
+    animation: slideDown 0.5s ease-out;
+    border-radius: 8px !important;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estados del sorteo */
+.status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-completed {
+    background: #d4edda;
+    color: #155724;
+}
+
+/* Grid de asignaciones */
+.assignments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+/* Responsive para móviles */
+@media (max-width: 600px) {
+    .w3-container {
+        padding: 8px !important;
+    }
+    
+    .w3-card {
+        margin: 8px 0 !important;
+        padding: 15px !important;
+    }
+    
+    .participant-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .participant-item form {
+        width: 100%;
+    }
+    
+    .participant-item form button {
+        width: 100%;
+    }
+    
+    .w3-btn {
+        width: 100%;
+        margin: 4px 0 !important;
+    }
+    
+    .header-gradient {
+        padding: 20px;
+        border-radius: 8px;
+    }
+    
+    .header-gradient h1 {
+        font-size: 24px !important;
+    }
+    
+    .assignments-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tenant-card {
+        padding: 15px !important;
+    }
+    
+    .w3-half {
+        width: 100% !important;
+        margin: 5px 0 !important;
+    }
+    
+    .w3-third {
+        width: 100% !important;
+        margin: 5px 0 !important;
+    }
+    
+    .w3-quarter {
+        width: 100% !important;
+        margin: 5px 0 !important;
+    }
+}
+
+/* Estilos para inputs en móviles */
+@media (max-width: 600px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select,
+    textarea {
+        font-size: 16px !important; /* Evita zoom automático en iOS */
+    }
+}
+
+/* Animaciones suaves */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilos para la página de participación */
+.participate-hero {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.participate-hero .emoji {
+    font-size: 64px;
+    display: block;
+    margin-bottom: 15px;
+}
+
+/* Mejoras para tabs y navegación */
+.w3-bar-item {
+    border-radius: 5px !important;
+    transition: background 0.3s !important;
+}
+
+.w3-bar-item:hover {
+    background: rgba(255,255,255,0.2) !important;
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #5a67d8;
+}
