@@ -60,16 +60,18 @@ function generateParticipantId() {
  * Obtiene todos los tenants
  */
 function getAllTenants() {
-    $tenants = [];
+    $tenants = array();
     $dirs = glob('tenants/*', GLOB_ONLYDIR);
     
-    foreach ($dirs as $dir) {
-        $tenantId = basename($dir);
-        $configPath = "$dir/config.json";
-        if (file_exists($configPath)) {
-            $config = readJsonFile($configPath);
-            if ($config) {
-                $tenants[] = $config;
+    if ($dirs) {
+        foreach ($dirs as $dir) {
+            $tenantId = basename($dir);
+            $configPath = $dir . '/config.json';
+            if (file_exists($configPath)) {
+                $config = readJsonFile($configPath);
+                if ($config) {
+                    $tenants[] = $config;
+                }
             }
         }
     }
@@ -81,7 +83,9 @@ function getAllTenants() {
  * Formatea una fecha
  */
 function formatDate($date) {
-    if (!$date) return 'N/A';
+    if (!$date) {
+        return 'N/A';
+    }
     return date('d/m/Y H:i', strtotime($date));
 }
 
@@ -89,11 +93,16 @@ function formatDate($date) {
  * Obtiene el estado del sorteo en texto
  */
 function getDrawStatusText($status) {
-    $statuses = [
+    $statuses = array(
         'pending' => '⏳ Pendiente',
         'completed' => '✅ Completado'
-    ];
-    return $statuses[$status] ?? $status;
+    );
+    
+    if (isset($statuses[$status])) {
+        return $statuses[$status];
+    }
+    
+    return $status;
 }
 
 /**
@@ -136,21 +145,22 @@ function redirect($url) {
  * Obtiene el IP del usuario
  */
 function getUserIP() {
-    $ipaddress = '';
-    if (isset($_SERVER['HTTP_CLIENT_IP']))
+    $ipaddress = 'UNKNOWN';
+    
+    if (isset($_SERVER['HTTP_CLIENT_IP'])) {
         $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
-    else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+    } else if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
         $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
-    else if(isset($_SERVER['HTTP_X_FORWARDED']))
+    } else if (isset($_SERVER['HTTP_X_FORWARDED'])) {
         $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
-    else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+    } else if (isset($_SERVER['HTTP_FORWARDED_FOR'])) {
         $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
-    else if(isset($_SERVER['HTTP_FORWARDED']))
+    } else if (isset($_SERVER['HTTP_FORWARDED'])) {
         $ipaddress = $_SERVER['HTTP_FORWARDED'];
-    else if(isset($_SERVER['REMOTE_ADDR']))
+    } else if (isset($_SERVER['REMOTE_ADDR'])) {
         $ipaddress = $_SERVER['REMOTE_ADDR'];
-    else
-        $ipaddress = 'UNKNOWN';
+    }
+    
     return $ipaddress;
 }
 
@@ -169,5 +179,72 @@ function generateSlug($text) {
     $text = strtolower(trim($text));
     $text = preg_replace('/\s+/', '-', $text);
     return $text;
+}
+
+/**
+ * Verifica si el servidor tiene PHP 7 o superior
+ */
+function isPhp7OrHigher() {
+    return version_compare(PHP_VERSION, '7.0.0', '>=');
+}
+
+/**
+ * Obtiene la versión de PHP en formato legible
+ */
+function getPhpVersion() {
+    return PHP_VERSION;
+}
+
+/**
+ * Escapa HTML de forma segura
+ */
+function e($text) {
+    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+}
+
+/**
+ * Trunca un texto a una longitud específica
+ */
+function truncateText($text, $length = 50, $suffix = '...') {
+    if (strlen($text) <= $length) {
+        return $text;
+    }
+    return substr($text, 0, $length) . $suffix;
+}
+
+/**
+ * Verifica si un valor está vacío (null, false, empty string, empty array)
+ */
+function isEmpty($value) {
+    if (is_null($value)) {
+        return true;
+    }
+    if (is_string($value) && trim($value) === '') {
+        return true;
+    }
+    if (is_array($value) && empty($value)) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Convierte un array a objeto stdClass
+ */
+function arrayToObject($array) {
+    if (!is_array($array)) {
+        return $array;
+    }
+    return json_decode(json_encode($array), false);
+}
+
+/**
+ * Convierte un objeto a array
+ */
+function objectToArray($object) {
+    if (!is_object($object) && !is_array($object)) {
+        return $object;
+    }
+    return json_decode(json_encode($object), true);
 }
 ?>

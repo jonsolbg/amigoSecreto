@@ -1,9 +1,9 @@
 <?php
 // include/functions/draw.php
 
-require_once __DIR__ . '/helpers.php';
-require_once __DIR__ . '/participants.php';
-require_once __DIR__ . '/assignments.php';
+require_once dirname(dirname(__FILE__)) . '/functions/helpers.php';
+require_once dirname(dirname(__FILE__)) . '/functions/participants.php';
+require_once dirname(dirname(__FILE__)) . '/functions/assignments.php';
 
 /**
  * Realiza el sorteo de amigo secreto
@@ -19,7 +19,7 @@ function performDraw($tenantId) {
     $count = count($participants);
     
     if ($count < 2) {
-        return false; // Necesita al menos 2 participantes
+        return false;
     }
     
     // Intentar asignar hasta 100 veces
@@ -33,10 +33,10 @@ function performDraw($tenantId) {
             
             // Actualizar estado del sorteo
             $drawStatusPath = getTenantPath($tenantId) . '/draw_status.json';
-            writeJsonFile($drawStatusPath, [
+            writeJsonFile($drawStatusPath, array(
                 'status' => 'completed',
                 'drawn_at' => date('Y-m-d H:i:s')
-            ]);
+            ));
             
             return true;
         }
@@ -53,34 +53,40 @@ function tryAssignment($participants) {
     // Mezclar participantes aleatoriamente
     shuffle($participants);
     $available = $participants;
-    $assignments = [];
+    $assignments = array();
     
     foreach ($participants as $giver) {
         // Excluir al mismo participante
-        $possible = array_filter($available, function($p) use ($giver) {
-            return $p['id'] !== $giver['id'];
-        });
-        
-        if (empty($possible)) {
-            return false; // No hay asignación posible
+        $possible = array();
+        foreach ($available as $p) {
+            if ($p['id'] !== $giver['id']) {
+                $possible[] = $p;
+            }
         }
         
-        $possible = array_values($possible);
+        if (empty($possible)) {
+            return false;
+        }
+        
         $index = array_rand($possible);
         $receiver = $possible[$index];
         
-        $assignments[] = [
+        $assignments[] = array(
             'giver_id' => $giver['id'],
             'giver_name' => $giver['name'],
             'giver_email' => $giver['email'],
             'receiver_id' => $receiver['id'],
             'receiver_name' => $receiver['name']
-        ];
+        );
         
         // Remover al receiver de disponibles
-        $available = array_filter($available, function($p) use ($receiver) {
-            return $p['id'] !== $receiver['id'];
-        });
+        $newAvailable = array();
+        foreach ($available as $p) {
+            if ($p['id'] !== $receiver['id']) {
+                $newAvailable[] = $p;
+            }
+        }
+        $available = $newAvailable;
     }
     
     return $assignments;
@@ -99,13 +105,13 @@ function resetDraw($tenantId) {
     $tenantPath = getTenantPath($tenantId);
     
     // Limpiar asignaciones
-    writeJsonFile("$tenantPath/assignments.json", []);
+    writeJsonFile($tenantPath . '/assignments.json', array());
     
     // Actualizar estado
-    writeJsonFile("$tenantPath/draw_status.json", [
+    writeJsonFile($tenantPath . '/draw_status.json', array(
         'status' => 'pending',
         'drawn_at' => null
-    ]);
+    ));
     
     return true;
 }
@@ -115,7 +121,10 @@ function resetDraw($tenantId) {
  */
 function getDrawStatus($tenantId) {
     $data = getTenantData($tenantId);
-    return $data ? $data['drawStatus'] : null;
+    if ($data) {
+        return $data['drawStatus'];
+    }
+    return null;
 }
 
 /**
@@ -123,7 +132,10 @@ function getDrawStatus($tenantId) {
  */
 function isDrawCompleted($tenantId) {
     $status = getDrawStatus($tenantId);
-    return $status && $status['status'] === 'completed';
+    if ($status && $status['status'] === 'completed') {
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -131,6 +143,9 @@ function isDrawCompleted($tenantId) {
  */
 function countAssignments($tenantId) {
     $data = getTenantData($tenantId);
-    return $data ? count($data['assignments']) : 0;
+    if ($data) {
+        return count($data['assignments']);
+    }
+    return 0;
 }
 ?>

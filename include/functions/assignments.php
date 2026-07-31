@@ -1,8 +1,8 @@
 <?php
 // include/functions/assignments.php
 
-require_once __DIR__ . '/helpers.php';
-require_once __DIR__ . '/participants.php';
+require_once dirname(dirname(__FILE__)) . '/functions/helpers.php';
+require_once dirname(dirname(__FILE__)) . '/functions/participants.php';
 
 /**
  * Obtiene la asignación de un participante por email
@@ -50,7 +50,10 @@ function getAssignmentByGiverId($tenantId, $giverId) {
  */
 function getAssignments($tenantId) {
     $data = getTenantData($tenantId);
-    return $data ? $data['assignments'] : [];
+    if ($data) {
+        return $data['assignments'];
+    }
+    return array();
 }
 
 /**
@@ -74,7 +77,10 @@ function hasAssignment($tenantId, $participantId) {
  */
 function getSecretFriend($tenantId, $participantId) {
     $assignment = getAssignmentByGiverId($tenantId, $participantId);
-    return $assignment ? $assignment['receiver_name'] : null;
+    if ($assignment) {
+        return $assignment['receiver_name'];
+    }
+    return null;
 }
 
 /**
@@ -106,8 +112,8 @@ function exportAssignmentsText($tenantId) {
     $output .= "Fecha: " . date('d/m/Y H:i:s') . "\n\n";
     
     foreach ($assignments as $assignment) {
-        $output .= "📝 {$assignment['giver_name']}";
-        $output .= " → 🎁 {$assignment['receiver_name']}\n";
+        $output .= "📝 " . $assignment['giver_name'];
+        $output .= " → 🎁 " . $assignment['receiver_name'] . "\n";
     }
     
     return $output;

@@ -1,8 +1,8 @@
 <?php
 // include/functions/participants.php
 
-require_once __DIR__ . '/helpers.php';
-require_once __DIR__ . '/draw.php';
+require_once dirname(dirname(__FILE__)) . '/functions/helpers.php';
+require_once dirname(dirname(__FILE__)) . '/functions/draw.php';
 
 /**
  * Agrega un nuevo participante
@@ -15,7 +15,10 @@ function addParticipant($tenantId, $name, $email) {
     }
     
     $participantsPath = getTenantPath($tenantId) . '/participants.json';
-    $participants = readJsonFile($participantsPath) ?? [];
+    $participants = readJsonFile($participantsPath);
+    if ($participants === null) {
+        $participants = array();
+    }
     
     // Verificar email duplicado
     foreach ($participants as $p) {
@@ -25,12 +28,12 @@ function addParticipant($tenantId, $name, $email) {
     }
     
     // Agregar participante
-    $participants[] = [
+    $participants[] = array(
         'id' => generateParticipantId(),
         'name' => trim($name),
         'email' => strtolower(trim($email)),
         'registered_at' => date('Y-m-d H:i:s')
-    ];
+    );
     
     if (!writeJsonFile($participantsPath, $participants)) {
         return false;
@@ -53,22 +56,26 @@ function removeParticipant($tenantId, $participantId) {
     }
     
     $participantsPath = getTenantPath($tenantId) . '/participants.json';
-    $participants = readJsonFile($participantsPath) ?? [];
+    $participants = readJsonFile($participantsPath);
+    if ($participants === null) {
+        return false;
+    }
     
     $found = false;
-    $participants = array_filter($participants, function($p) use ($participantId, &$found) {
+    $newParticipants = array();
+    foreach ($participants as $p) {
         if ($p['id'] === $participantId) {
             $found = true;
-            return false;
+        } else {
+            $newParticipants[] = $p;
         }
-        return true;
-    });
+    }
     
     if (!$found) {
         return false;
     }
     
-    if (!writeJsonFile($participantsPath, array_values($participants))) {
+    if (!writeJsonFile($participantsPath, $newParticipants)) {
         return false;
     }
     
@@ -83,7 +90,10 @@ function removeParticipant($tenantId, $participantId) {
  */
 function getParticipants($tenantId) {
     $data = getTenantData($tenantId);
-    return $data ? $data['participants'] : [];
+    if ($data) {
+        return $data['participants'];
+    }
+    return array();
 }
 
 /**

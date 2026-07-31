@@ -1,10 +1,10 @@
 <?php
 // include/functions/tenant.php
 
-require_once __DIR__ . '/helpers.php';
-require_once __DIR__ . '/participants.php';
-require_once __DIR__ . '/draw.php';
-require_once __DIR__ . '/assignments.php';
+require_once dirname(dirname(__FILE__)) . '/functions/helpers.php';
+require_once dirname(dirname(__FILE__)) . '/functions/participants.php';
+require_once dirname(dirname(__FILE__)) . '/functions/draw.php';
+require_once dirname(dirname(__FILE__)) . '/functions/assignments.php';
 
 /**
  * Crea un nuevo tenant
@@ -28,26 +28,26 @@ function createTenant($tenantId, $adminName, $adminEmail) {
     }
     
     // Configuración del tenant
-    $config = [
+    $config = array(
         'tenant_id' => $tenantId,
         'admin_name' => $adminName,
         'admin_email' => $adminEmail,
         'created_at' => date('Y-m-d H:i:s'),
         'status' => 'active'
-    ];
+    );
     
-    if (!writeJsonFile("$tenantPath/config.json", $config)) {
+    if (!writeJsonFile($tenantPath . '/config.json', $config)) {
         rmdir($tenantPath);
         return false;
     }
     
     // Inicializar archivos
-    writeJsonFile("$tenantPath/participants.json", []);
-    writeJsonFile("$tenantPath/assignments.json", []);
-    writeJsonFile("$tenantPath/draw_status.json", [
+    writeJsonFile($tenantPath . '/participants.json', array());
+    writeJsonFile($tenantPath . '/assignments.json', array());
+    writeJsonFile($tenantPath . '/draw_status.json', array(
         'status' => 'pending',
         'drawn_at' => null
-    ]);
+    ));
     
     return true;
 }
@@ -64,12 +64,27 @@ function getTenantData($tenantId) {
     
     $tenantPath = getTenantPath($tenantId);
     
-    return [
-        'config' => readJsonFile("$tenantPath/config.json"),
-        'participants' => readJsonFile("$tenantPath/participants.json") ?? [],
-        'assignments' => readJsonFile("$tenantPath/assignments.json") ?? [],
-        'drawStatus' => readJsonFile("$tenantPath/draw_status.json") ?? ['status' => 'pending', 'drawn_at' => null]
-    ];
+    $participants = readJsonFile($tenantPath . '/participants.json');
+    if ($participants === null) {
+        $participants = array();
+    }
+    
+    $assignments = readJsonFile($tenantPath . '/assignments.json');
+    if ($assignments === null) {
+        $assignments = array();
+    }
+    
+    $drawStatus = readJsonFile($tenantPath . '/draw_status.json');
+    if ($drawStatus === null) {
+        $drawStatus = array('status' => 'pending', 'drawn_at' => null);
+    }
+    
+    return array(
+        'config' => readJsonFile($tenantPath . '/config.json'),
+        'participants' => $participants,
+        'assignments' => $assignments,
+        'drawStatus' => $drawStatus
+    );
 }
 
 /**
@@ -77,7 +92,10 @@ function getTenantData($tenantId) {
  */
 function getTenantConfig($tenantId) {
     $data = getTenantData($tenantId);
-    return $data ? $data['config'] : null;
+    if ($data) {
+        return $data['config'];
+    }
+    return null;
 }
 
 /**
@@ -111,9 +129,11 @@ function deleteTenant($tenantId) {
     }
     
     // Eliminar todos los archivos JSON
-    $files = glob("$tenantPath/*.json");
-    foreach ($files as $file) {
-        unlink($file);
+    $files = glob($tenantPath . '/*.json');
+    if ($files) {
+        foreach ($files as $file) {
+            unlink($file);
+        }
     }
     
     // Eliminar directorio
@@ -129,12 +149,12 @@ function getTenantStats($tenantId) {
         return null;
     }
     
-    return [
+    return array(
         'total_participants' => count($data['participants']),
         'draw_status' => $data['drawStatus']['status'],
         'drawn_at' => $data['drawStatus']['drawn_at'],
         'total_assignments' => count($data['assignments']),
         'created_at' => $data['config']['created_at']
-    ];
+    );
 }
 ?>
