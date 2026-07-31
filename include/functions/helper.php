@@ -102,4 +102,72 @@ function getDrawStatusText($status) {
 function canPerformDraw($participants) {
     return count($participants) >= 2;
 }
+
+/**
+ * Función para debuggear (solo en desarrollo)
+ */
+function debug($data) {
+    if (getenv('APP_ENV') === 'development') {
+        echo '<pre>';
+        print_r($data);
+        echo '</pre>';
+    }
+}
+
+/**
+ * Obtiene la URL base del sistema
+ */
+function getBaseUrl() {
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'];
+    $script = dirname($_SERVER['SCRIPT_NAME']);
+    return $protocol . '://' . $host . $script;
+}
+
+/**
+ * Redirecciona a una URL
+ */
+function redirect($url) {
+    header('Location: ' . $url);
+    exit;
+}
+
+/**
+ * Obtiene el IP del usuario
+ */
+function getUserIP() {
+    $ipaddress = '';
+    if (isset($_SERVER['HTTP_CLIENT_IP']))
+        $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+    else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+        $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    else if(isset($_SERVER['HTTP_X_FORWARDED']))
+        $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+    else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+        $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+    else if(isset($_SERVER['HTTP_FORWARDED']))
+        $ipaddress = $_SERVER['HTTP_FORWARDED'];
+    else if(isset($_SERVER['REMOTE_ADDR']))
+        $ipaddress = $_SERVER['REMOTE_ADDR'];
+    else
+        $ipaddress = 'UNKNOWN';
+    return $ipaddress;
+}
+
+/**
+ * Limpia texto para evitar XSS
+ */
+function sanitizeText($text) {
+    return htmlspecialchars(trim($text), ENT_QUOTES, 'UTF-8');
+}
+
+/**
+ * Genera un slug a partir de un texto
+ */
+function generateSlug($text) {
+    $text = preg_replace('/[^a-zA-Z0-9\s]/', '', $text);
+    $text = strtolower(trim($text));
+    $text = preg_replace('/\s+/', '-', $text);
+    return $text;
+}
 ?>

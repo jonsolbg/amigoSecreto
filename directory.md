@@ -3,6 +3,7 @@ amigo-secreto/
 ├── admin.php
 ├── participate.php
 ├── include/
+│   ├── mainApp.php          ← Archivo de inicialización principal
 │   └── functions/
 │       ├── tenant.php
 │       ├── participants.php
