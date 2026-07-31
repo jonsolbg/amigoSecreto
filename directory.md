@@ -2,7 +2,13 @@ amigo-secreto/
 ├── index.php
 ├── admin.php
 ├── participate.php
-├── functions.php
+├── include/
+│   └── functions/
+│       ├── tenant.php
+│       ├── participants.php
+│       ├── draw.php
+│       ├── assignments.php
+│       └── helpers.php
 ├── tenants/
 │   └── {tenant_id}/
 │       ├── config.json
