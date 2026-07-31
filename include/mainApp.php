@@ -111,6 +111,22 @@ if (file_exists(ROOT_PATH . '/.env')) {
     }
 }
 
+
+<?php
+// include/mainApp.php - Agregar al final
+
+// Función para obtener el nombre del archivo de administración (seguro)
+function getAdminPanelFile() {
+    // Puedes cambiar esto para ocultar el nombre del archivo
+    return 'tenant_admin.php';
+}
+
+// Función para verificar si el acceso es desde el panel de administración
+function isAdminPanel() {
+    $script = basename($_SERVER['SCRIPT_NAME']);
+    return $script === getAdminPanelFile();
+}
+
+
 // Inicialización completada
 define('APP_INITIALIZED', true);
-?>

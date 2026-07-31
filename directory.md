@@ -1,7 +1,8 @@
 amigo-secreto/
-├── index.php
-├── admin.php
-├── participate.php
+├── index.php                 ← Página pública (selección de tenants)
+├── tenant_admin.php          ← Panel superadmin (crear/administrar tenants)
+├── admin.php                 ← Panel de admin de tenant (sin cambios)
+├── participate.php           ← Participación (sin cambios)
 ├── include/
 │   ├── mainApp.php
 │   └── functions/
@@ -12,7 +13,7 @@ amigo-secreto/
 │       └── helpers.php
 ├── assets/
 │   └── css/
-│       └── custom.css          ← Estilos personalizados
+│       └── custom.css
 ├── tenants/
 │   └── {tenant_id}/
 │       ├── config.json
