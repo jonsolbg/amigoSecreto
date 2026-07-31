@@ -4,3 +4,52 @@ AddHandler application/x-httpd-php70 .php
 AddHandler application/x-httpd-php71 .php
 # o
 AddHandler application/x-httpd-php72 .php
+
+# .htaccess
+Options -Indexes
+
+# Proteger archivos JSON
+<FilesMatch "\.(json)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Proteger el directorio include
+<Directory "include">
+    Order Allow,Deny
+    Deny from all
+</Directory>
+
+# Proteger el directorio tenants
+<Directory "tenants">
+    Order Allow,Deny
+    Deny from all
+</Directory>
+
+# Proteger tenant_admin.php con autenticación adicional (opcional)
+# <Files "tenant_admin.php">
+#     AuthType Basic
+#     AuthName "Panel de Administración"
+#     AuthUserFile /home/usuario/.htpasswd
+#     Require valid-user
+#     # Si usas autenticación HTTP, comenta las líneas de abajo
+#     # Satisfy any
+#     # Require all granted
+# </Files>
+
+# Prevenir listado de directorios
+<IfModule mod_autoindex.c>
+    Options -Indexes
+</IfModule>
+
+# Proteger contra acceso a archivos ocultos
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Prevenir acceso a archivos de backup
+<FilesMatch "\.(bak|backup|old|orig|tmp|sql|zip|tar|gz)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>

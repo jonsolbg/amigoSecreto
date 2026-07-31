@@ -65,7 +65,7 @@ function displayFlashMessage() {
     $flash = getFlashMessage();
     if ($flash) {
         $class = ($flash['type'] === 'error') ? 'error' : 'message';
-        echo "<div class='$class'>" . $flash['message'] . "</div>";
+        echo "<div class='$class'><i class='fas fa-" . ($flash['type'] === 'error' ? 'exclamation-circle' : 'check-circle') . "'></i> " . $flash['message'] . "</div>";
     }
 }
 
@@ -112,8 +112,6 @@ if (file_exists(ROOT_PATH . '/.env')) {
 }
 
 
-<?php
-// include/mainApp.php - Agregar al final
 
 // Función para obtener el nombre del archivo de administración (seguro)
 function getAdminPanelFile() {
@@ -125,6 +123,63 @@ function getAdminPanelFile() {
 function isAdminPanel() {
     $script = basename($_SERVER['SCRIPT_NAME']);
     return $script === getAdminPanelFile();
+}
+
+
+
+// Funciones de autenticación para superadmin
+
+/**
+ * Verifica si el superadmin está autenticado
+ */
+function isSuperAdminAuthenticated() {
+    return isset($_SESSION['superadmin_auth']) && 
+           $_SESSION['superadmin_auth'] === true;
+}
+
+/**
+ * Obtiene el tiempo restante de sesión del superadmin
+ */
+function getSuperAdminSessionTimeRemaining() {
+    if (!isset($_SESSION['superadmin_auth_time'])) {
+        return 0;
+    }
+    
+    $session_timeout = 8 * 3600; // 8 horas
+    $elapsed = time() - $_SESSION['superadmin_auth_time'];
+    return max(0, $session_timeout - $elapsed);
+}
+
+/**
+ * Formatea el tiempo restante de sesión
+ */
+function formatSessionTime($seconds) {
+    if ($seconds <= 0) {
+        return 'Sesión expirada';
+    }
+    
+    $hours = floor($seconds / 3600);
+    $minutes = floor(($seconds % 3600) / 60);
+    $seconds = $seconds % 60;
+    
+    if ($hours > 0) {
+        return sprintf("%d h %02d m", $hours, $minutes);
+    } elseif ($minutes > 0) {
+        return sprintf("%d m %02d s", $minutes, $seconds);
+    } else {
+        return sprintf("%d s", $seconds);
+    }
+}
+
+/**
+ * Cierra la sesión del superadmin
+ */
+function logoutSuperAdmin() {
+    unset($_SESSION['superadmin_auth']);
+    unset($_SESSION['superadmin_auth_time']);
+    unset($_SESSION['superadmin_ip']);
+    unset($_SESSION['superadmin_user_agent']);
+    session_destroy();
 }
 
 
